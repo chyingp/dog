@@ -21,6 +21,8 @@
   },
   "homepage": "https://github.com/chyingp/dog#readme",
   "dependencies": {
-    "commander": "^2.9.0"
+    "cheerio": "^0.20.0",
+    "commander": "^2.9.0",
+    "request": "^2.72.0"
   }
 }
