@@ -1,0 +1,26 @@
+{
+  "name": "dog",
+  "version": "0.0.1",
+  "description": "Command line tool for joke.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chyingp/dog.git"
+  },
+  "keywords": [
+    "dog",
+    "linux"
+  ],
+  "author": "chyingp",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/chyingp/dog/issues"
+  },
+  "homepage": "https://github.com/chyingp/dog#readme",
+  "dependencies": {
+    "commander": "^2.9.0"
+  }
+}
