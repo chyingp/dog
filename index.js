@@ -53,7 +53,10 @@ function getAbsoluteImgUrl(imgUrls, originalUrl){
 	var url = require('url');
 	var parsedUrlObj = url.parse(originalUrl);
 	imgUrls = imgUrls.map(function(imgUrl){
-		var ret = parsedUrlObj.protocol + '//' + parsedUrlObj.host + url.resolve(parsedUrlObj.pathname, imgUrl);
+		var ret = imgUrl;
+		if(!ret.match(/^http/)){
+			ret = parsedUrlObj.protocol + '//' + parsedUrlObj.host + url.resolve(parsedUrlObj.pathname, imgUrl);
+		}
 		ret = ret.replace('.thumb.jpg', '');
 		return ret;
 	});
