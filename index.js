@@ -37,7 +37,7 @@ function getWebPage(url, callback) {
 
 function getImgUrls(htmlContent){
 	var $ = cheerio.load(htmlContent);
-	var $imgs = $('img');
+	var $imgs = $('#container img');
 	var items = [];
 	$imgs.each(function(index, ele){
 		var src = $(this).prop('src');
@@ -66,13 +66,24 @@ function getAbsoluteImgUrl(imgUrls, originalUrl){
 function outputResult(absoluteImgUrls){
 	var child_process = require('child_process');
 	fs.writeFileSync('img.txt', absoluteImgUrls.join('\n'));
-	child_process.exec('wget -i img.txt', function(error, stdout, stderr){
-		if(error){
-			console.error('图片下载失败');
-			return;
-		}
-		console.log('图片下载成功!');
-		console.log(stdout);
+	// child_process.exec('aria2c -i img.txt -x 12', function(error, stdout, stderr){
+	// 	if(error){
+	// 		console.error('图片下载失败');
+	// 		return;
+	// 	}
+	// 	console.log('图片下载成功!');
+	// 	console.log(stdout);
+	// });
+
+	var child = child_process.spawn('aria2c', ['-i', 'img.txt', '-x', '12']);
+	child.stdout.on('data', function(data){
+		console.log(data);
+	});
+	child.stderr.on('data', function(data){
+		console.log(data);
+	});
+	child.on('close', function(code){
+		console.log('child process exited with code ' + code);
 	});
 }
 
