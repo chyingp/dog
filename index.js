@@ -230,10 +230,14 @@ function getAlbumImgUrls(urls, callback){
 /**
  * 将专辑对应的图片地址链接，写到 links.txt 里，后续给到下载工具使用
  * @param  {Object} item 专辑配置信息
+ * @param {Function} callback 执行完成的回调
  */
-function createImgLinkFile(item){
+function createImgLinkFile(item, callback){
 	var path = require('path');
 	var linkFilePath = path.resolve(item.localPath, 'links.txt');
+
+	console.log('创建专辑下载链接文件开始：' + linkFilePath);
+
 	var promises = item.urls.map(function(url){
 		return new Promise(function(resolve, reject){
 			getAlbumImgUrlsInOnePage(url, function(imgUrls){
@@ -241,13 +245,16 @@ function createImgLinkFile(item){
 			});		
 		});
 	});
+	
 	Promise
 		.all(promises)
 		.then(function(args){
 			var imgUrlsInOneAlbum = flatten(args);
 			fs.writeFileSync(linkFilePath, imgUrlsInOneAlbum.join('\n'));
 
-			console.log('创建专辑下载链接文件：' + linkFilePath);
+			console.log('创建专辑下载链接文件结束：' + linkFilePath);
+
+			callback && callback(imgUrlsInOneAlbum, linkFilePath);
 		});
 }
 
@@ -351,6 +358,12 @@ function test(){
 	
 }
 
+/**
+ * 下载图片，图片存放的位置，在 linkeFilePath 所在目录的 images 目录下
+ * @param  {String}   linkeFilePath 图片下载链接的地址（本地文件系统绝对路径）
+ * @param  {Function} callback      下载完成的回调
+ * @return {[type]}                 [description]
+ */
 function downloadImagesWithLinkFile(linkeFilePath, callback){
 	var child_process = require('child_process');
 	var path = require('path');
@@ -482,9 +495,16 @@ function run(){
 
 		console.log('创建专辑目录结束！');
 
+		console.log('创建专辑下载链接文件开始！');
+		
 		items.forEach(function(item){
-			createImgLinkFile(item);	// 创建图片链接文件
-		});		
+			// 创建图片链接文件
+			createImgLinkFile(item, function(imgUrlsInOneAlbum, linkFilePath){
+				downloadImagesWithLinkFile(linkFilePath);
+			});	
+		});
+
+		console.log('创建专辑下载链接文件结束！');
 
 		console.log('专辑信息写入album.json开始！');
 		
