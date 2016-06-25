@@ -478,8 +478,8 @@ function run(){
 
 	// 专辑所在网页的地址（专辑过多，存在分页的情况）
 	var webPageUrls = getAlbumPageUrls(program.url, program.id, page);
+	console.log('专辑网页地址：' + webPageUrls.join('\n'));
 	
-	console.log(webPageUrls);
 
 	console.log('获取专辑信息开始！');
 	
