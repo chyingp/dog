@@ -459,18 +459,12 @@ function run(){
 		page = 1;
 	}
 
+	// 专辑所在网页的地址（专辑过多，存在分页的情况）
 	var webPageUrls = getAlbumPageUrls(program.url, program.id, page);
 	
 	console.log(webPageUrls);
 
 	return;
-
-
-	// 专辑所在网页的地址（专辑过多，存在分页的情况）
-	var webPageUrls = [
-		'http://www.zhuamei.net/home.php?mod=space&do=album&catid=10&view=all&page=1',
-		'http://www.zhuamei.net/home.php?mod=space&do=album&catid=10&view=all&page=2'
-	];
 
 	console.log('获取专辑地址开始！');
 	getAllAlbumItems(webPageUrls, function(items){
