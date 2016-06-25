@@ -55,7 +55,7 @@ function getWebPage(url, callback) {
 
 function getImgUrls(htmlContent){
 	var $ = cheerio.load(htmlContent);
-	var $imgs = $('#container img');
+	var $imgs = $('#tiles img');
 	var items = [];
 	$imgs.each(function(index, ele){
 		var src = $(this).prop('src');
@@ -195,7 +195,7 @@ function getAlbumImgUrlsInOnePage(url, callback){
 	getWebPage(url, function(htmlContent){
 		
 		var imgUrls = getImgUrls( htmlContent );
-		imgUrls = getAbsoluteImgUrls( imgUrls, program.url );
+		imgUrls = getAbsoluteImgUrls( imgUrls,  url);
 		// outputResult(imgUrls);
 		console.log('专辑图片地址解析完成：' + url);
 		
@@ -239,7 +239,7 @@ function createImgLinkFile(item){
 		.all(promises)
 		.then(function(args){
 			var imgUrlsInOneAlbum = flatten(args);
-			fs.writeFileSync(linkFilePath, JSON.stringify(imgUrlsInOneAlbum, null, 4));
+			fs.writeFileSync(linkFilePath, imgUrlsInOneAlbum.join('\n'));
 
 			console.log('创建专辑下载链接文件：' + linkFilePath);
 		});
@@ -259,8 +259,13 @@ function createAlbumDest(item){
 	var urlParsedObj = url.parse(item.urls[0], true);
 	var absoluteAlbumDest = path.resolve(urlParsedObj.query.id + '-' + item.name);
 	var readmeFilePath = path.resolve(absoluteAlbumDest, './readme.txt');
+
+	item.localPath = absoluteAlbumDest;
 	
-	fs.mkdirSync(absoluteAlbumDest);
+	if(!fs.existsSync(absoluteAlbumDest)){
+		fs.mkdirSync(absoluteAlbumDest);	
+	}
+	
 	fs.writeFileSync(readmeFilePath, JSON.stringify(item, null, 4));
 
 	console.log('专辑目录创建：' + absoluteAlbumDest);
@@ -292,12 +297,120 @@ function getAllAlbumItems(urls, callback){
 		});
 }
 
+
+function test(){
+	var items = [
+		{
+		    "name": "[TuiGirl推女郎] 2015.11.14 No.63 王依萌~2",
+		    "urls": [
+		        "http://www.zhuamei.net/home.php?mod=space&uid=3&do=album&id=939&page=1"
+		    ],
+		    "intro": "美女语录：王依萌~2\r\n明星模特\r\n170cm 92-61-90 鞋码：38\r\n萌颜巨乳，高大白美\r\n爱纠结爱拍照的萌妞\r\n《推女郎》精美影响刊物第 63 期 2015.11.14\r\n拍摄地：三亚-半山半岛洲际 摄影师：推女郎特约\r\n   ",
+		    "total": 40,
+		    "localPath": "/private/tmp/album/939-[TuiGirl推女郎] 2015.11.14 No.63 王依萌~2"
+		},
+		{
+		    "name": "[TuiGirl推女郎] 2015.08.17 No.58 松果儿",
+		    "urls": [
+		        "http://www.zhuamei.net/home.php?mod=space&uid=2&do=album&id=904&page=1"
+		    ],
+		    "intro": "美女语录：新锐模特\r\n168cm 92-60-90 鞋码：36\r\n袅娜娉婷，惹火尤物\r\n艺术系硕士，网红界女神\r\n《推女郎》精美影像刊物第58期\r\n拍摄地：北京 摄影师：推女郎特约",
+		    "total": 38,
+		    "localPath": "/private/tmp/album/904-[TuiGirl推女郎] 2015.08.17 No.58 松果儿"
+		},
+		{
+		    "name": "[TuiGirl推女郎] 未流出版权图@丛桃桃@辛楠_兔兔李颖 ...",
+		    "urls": [
+		        "http://www.zhuamei.net/home.php?mod=space&uid=11279&do=album&id=519&page=1"
+		    ],
+		    "intro": "美女语录：命运从来都是峰回路转的，因为有了曲折和故事，我们的生命才会精彩。有时候，哭泣，不是屈服；后退，不是认输；放手，不是放弃。摔倒了又怎样，至少我们还年轻！别妄想着倒带，这是生活，不是电影。人只要生活在这个世界上，就有很多烦恼，痛苦或是快乐，取决于你的内心。",
+		    "total": 29,
+		    "localPath": "/private/tmp/album/519-[TuiGirl推女郎] 未流出版权图@丛桃桃@辛楠_兔兔李颖 ..."
+		},
+		{
+		    "name": "[TuiGirl推女郎]2014.03.11 第24期 于大小姐",
+		    "urls": [
+		        "http://www.zhuamei.net/home.php?mod=space&uid=4&do=album&id=501&page=1",
+		        "http://www.zhuamei.net/home.php?mod=space&uid=4&do=album&id=501&page=2"
+		    ],
+		    "intro": "美女语录：相信美好，相信良善，为人，无悔就是道，无怨就是德。人生，所有的事情，哪能事事如意，样样顺心，何况，痛苦也不是人生的全部，伤过，哭过，日子还是得过。",
+		    "total": 55,
+		    "localPath": "/private/tmp/album/501-[TuiGirl推女郎]2014.03.11 第24期 于大小姐"
+		}		
+	];
+
+	items.forEach(function(item){
+		createImgLinkFile(item);
+	});
+	
+}
+
+function downloadImagesWithLinkFile(linkeFilePath, callback){
+	var child_process = require('child_process');
+	var path = require('path');
+	var dirname = path.dirname(linkeFilePath);
+	
+	// fs.writeFileSync(imgUrlFilename, absoluteImgUrls.join('\n'));
+	
+	console.log('开始下载图片：' + dirname);
+
+	child_process.exec('aria2c -i links.txt -x 16 -d ./images', {cwd: dirname}, function(error, stdout, stderr){
+		if(error){
+			console.error('图片下载失败：' + dirname);
+			return;
+		}
+		console.log('图片下载成功：' + dirname);
+		callback && callback();
+	});
+}
+
+function processLinkFile(){
+	var glob = require('glob');
+	var files = glob.sync('**/links.txt');
+	
+	// files = files.slice(2);
+	// files.forEach(function(file){
+	// 	console.log('处理开始：' + file);
+	// 	var content = fs.readFileSync(file, {encoding: 'utf8'});
+	// 	var array = JSON.parse(content);
+	// 	var str = array.join('\n');
+	// 	fs.writeFileSync(file, str);
+	// 	console.log('处理结束：' + file);
+	// });
+
+	// var file = files[2];
+	// downloadImagesWithLinkFile(file);
+
+	files = files.slice(3);
+	
+	// files.forEach(function(file){
+	// 	console.log('处理开始：' + file);
+	// 	var content = fs.readFileSync(file, {encoding: 'utf8'});
+	// 	var array = JSON.parse(content);
+	// 	var str = array.join('\n');
+	// 	fs.writeFileSync(file, str);
+	// 	console.log('处理结束：' + file);
+	// });
+	
+	download(files, 0);
+}
+
+function download(files, index){
+	downloadImagesWithLinkFile(files[index], function(){
+		if(index<(files.length-1)){
+			download(files, index+1);
+		}
+	});
+}
+
 function run(){
 	// if(!program.url){
 	// 	console.log('请输入网页地址');
 	// 	return;
 	// }
-	
+	// return test();
+	return processLinkFile();
+
 	// 专辑所在网页的地址（专辑过多，存在分页的情况）
 	var webPageUrls = [
 		'http://www.zhuamei.net/home.php?mod=space&do=album&catid=10&view=all&page=1',
@@ -307,19 +420,20 @@ function run(){
 	console.log('获取专辑地址开始！');
 	getAllAlbumItems(webPageUrls, function(items){
 		
-		fs.writeFileSync('./album.json', JSON.stringify(items, null, 4));
 		console.log('获取专辑地址结束！');
-
 
 		items.forEach(function(item){
 			var albumDestPath = createAlbumDest(item);  // 专辑所在地址(本地文件系统)
-			item.localPath = albumDestPath;			
-		
-			// createImgLinkFile(item);
+			createImgLinkFile(item);	// 创建图片链接文件
 		});
-		createImgLinkFile(items[0]);
-		// getAlbumImgUrls(items);
+
+		fs.writeFileSync('./album.json', JSON.stringify(items, null, 4));  // 将专辑相关信息写到文件里
 	});
 }
 
 run();
+
+// 各种统计信息，如
+// 1、专辑网页多少个解析成功、失败
+// 2、相册网页多少个即系成功、失败
+// 3、图片多少个下载成功、失败
