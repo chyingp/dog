@@ -8,6 +8,8 @@ var imgTypes = ['.jpg', '.jpeg', '.png', '.bmp'];
 program
   .version('0.0.1')
   .option('-u, --url [value]', '网页地址')
+  .option('-p, --page [value]', '网页个数')
+  .option('-i, --id [value]', '专辑id')
   .parse(process.argv);
 
 function getWebPage(url, callback) {
@@ -403,16 +405,72 @@ function download(files, index){
 	});
 }
 
+/**
+ * 通过用户输入的参数，包括url、catid、page，获取需要处理的页面（专辑的集合页，每个分类可能有多个页面）
+ * @param  {String} originalUrl 用户随便拷贝的某个专辑的页面地址
+ * @param  {String} catid       专辑的分类id
+ * @param  {Number} page        专辑分多少页，人工输入，减少页面分析的麻烦
+ * @return {Array}             页面地址的数组
+ */
+function getAlbumPageUrls(originalUrl, catid, page){
+	
+	var url = require('url');
+	var webPageUrls = [];
+	var parsedUrlObj = url.parse(originalUrl, true);
+	var query = parsedUrlObj.query;
+	var searchStringList = [];
+	var value;
+
+	originalUrl = originalUrl.match(/[^\?]+/)[0] + '?';	// 过滤掉 search string
+
+	query.catid = catid;  // 修改专辑id
+	delete query.page;  // page 会自动补全，这里不需要
+
+
+	for(var key in query){
+		searchStringList.push(key + '=' + query[key])
+	}
+
+	originalUrl += searchStringList.join('&');
+
+	for(var i = 1; i <= page; i++){
+		webPageUrls.push(originalUrl + '&page=' + i);
+	}
+
+	return webPageUrls;
+}
+
 function run(){
-	// if(!program.url){
-	// 	console.log('请输入网页地址');
-	// 	return;
-	// }
-	// return test();
-	return processLinkFile();
+	
+	if(!program.url){
+		console.error('请输入网页地址');
+		return;
+	}
+
+	// 专辑id
+	if(!program.id){
+		console.error('请输入专辑地址');
+		return;
+	}
+
+	// 默认页码
+	var page = program.page;
+	if(!page){
+		page = 1;
+	}
+
+	var webPageUrls = getAlbumPageUrls(program.url, program.id, page);
+	
+	console.log(webPageUrls);
+
+	return;
+
 
 	// 专辑所在网页的地址（专辑过多，存在分页的情况）
-	var webPageUrls = [];
+	var webPageUrls = [
+		'http://www.zhuamei.net/home.php?mod=space&do=album&catid=10&view=all&page=1',
+		'http://www.zhuamei.net/home.php?mod=space&do=album&catid=10&view=all&page=2'
+	];
 
 	console.log('获取专辑地址开始！');
 	getAllAlbumItems(webPageUrls, function(items){
