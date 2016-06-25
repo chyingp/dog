@@ -10,6 +10,7 @@ program
   .option('-u, --url [value]', '网页地址')
   .option('-p, --page [value]', '网页个数')
   .option('-i, --id [value]', '专辑id')
+  .option(', --download [value]', '是否下载图片地址')
   .parse(process.argv);
 
 function getWebPage(url, callback) {
@@ -479,7 +480,7 @@ function run(){
 	// 专辑所在网页的地址（专辑过多，存在分页的情况）
 	var webPageUrls = getAlbumPageUrls(program.url, program.id, page);
 	console.log('专辑网页地址：' + webPageUrls.join('\n'));
-	
+
 
 	console.log('获取专辑信息开始！');
 	
@@ -500,7 +501,9 @@ function run(){
 		items.forEach(function(item){
 			// 创建图片链接文件
 			createImgLinkFile(item, function(imgUrlsInOneAlbum, linkFilePath){
-				downloadImagesWithLinkFile(linkFilePath);
+				if(program.download){
+					downloadImagesWithLinkFile(linkFilePath);	
+				}				
 			});	
 		});
 
