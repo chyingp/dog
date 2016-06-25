@@ -227,6 +227,10 @@ function getAlbumImgUrls(urls, callback){
 		});
 }
 
+/**
+ * 将专辑对应的图片地址链接，写到 links.txt 里，后续给到下载工具使用
+ * @param  {Object} item 专辑配置信息
+ */
 function createImgLinkFile(item){
 	var path = require('path');
 	var linkFilePath = path.resolve(item.localPath, 'links.txt');
@@ -276,7 +280,7 @@ function createAlbumDest(item){
 }
 
 /**
- * 获取所有专辑名称
+ * 获取所有专辑的信息
  * @param  {Array} urls 含有图片专辑的网页地址，比如 ['http://xxx.xxx.com/xx']
  * @return {Array}      专辑相关信息，格式为 [{name: 'xx', urls: ['xx', 'xx'], intro: 'xx', total: xx}]
  */
@@ -464,19 +468,29 @@ function run(){
 	
 	console.log(webPageUrls);
 
-	return;
-
-	console.log('获取专辑地址开始！');
+	console.log('获取专辑信息开始！');
+	
 	getAllAlbumItems(webPageUrls, function(items){
 		
-		console.log('获取专辑地址结束！');
+		console.log('获取专辑信息结束！');
+
+		console.log('创建专辑目录开始！');
 
 		items.forEach(function(item){
 			var albumDestPath = createAlbumDest(item);  // 专辑所在地址(本地文件系统)
-			createImgLinkFile(item);	// 创建图片链接文件
 		});
 
+		console.log('创建专辑目录结束！');
+
+		items.forEach(function(item){
+			createImgLinkFile(item);	// 创建图片链接文件
+		});		
+
+		console.log('专辑信息写入album.json开始！');
+		
 		fs.writeFileSync('./album.json', JSON.stringify(items, null, 4));  // 将专辑相关信息写到文件里
+		
+		console.log('专辑信息写入album.json结束！');
 	});
 }
 
