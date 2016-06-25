@@ -412,10 +412,7 @@ function run(){
 	return processLinkFile();
 
 	// 专辑所在网页的地址（专辑过多，存在分页的情况）
-	var webPageUrls = [
-		'http://www.zhuamei.net/home.php?mod=space&do=album&catid=10&view=all&page=1',
-		'http://www.zhuamei.net/home.php?mod=space&do=album&catid=10&view=all&page=2'
-	];
+	var webPageUrls = [];
 
 	console.log('获取专辑地址开始！');
 	getAllAlbumItems(webPageUrls, function(items){
