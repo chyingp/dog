@@ -312,53 +312,6 @@ function getAllAlbumItems(urls, callback){
 }
 
 
-function test(){
-	var items = [
-		{
-		    "name": "[TuiGirl推女郎] 2015.11.14 No.63 王依萌~2",
-		    "urls": [
-		        "http://www.zhuamei.net/home.php?mod=space&uid=3&do=album&id=939&page=1"
-		    ],
-		    "intro": "美女语录：王依萌~2\r\n明星模特\r\n170cm 92-61-90 鞋码：38\r\n萌颜巨乳，高大白美\r\n爱纠结爱拍照的萌妞\r\n《推女郎》精美影响刊物第 63 期 2015.11.14\r\n拍摄地：三亚-半山半岛洲际 摄影师：推女郎特约\r\n   ",
-		    "total": 40,
-		    "localPath": "/private/tmp/album/939-[TuiGirl推女郎] 2015.11.14 No.63 王依萌~2"
-		},
-		{
-		    "name": "[TuiGirl推女郎] 2015.08.17 No.58 松果儿",
-		    "urls": [
-		        "http://www.zhuamei.net/home.php?mod=space&uid=2&do=album&id=904&page=1"
-		    ],
-		    "intro": "美女语录：新锐模特\r\n168cm 92-60-90 鞋码：36\r\n袅娜娉婷，惹火尤物\r\n艺术系硕士，网红界女神\r\n《推女郎》精美影像刊物第58期\r\n拍摄地：北京 摄影师：推女郎特约",
-		    "total": 38,
-		    "localPath": "/private/tmp/album/904-[TuiGirl推女郎] 2015.08.17 No.58 松果儿"
-		},
-		{
-		    "name": "[TuiGirl推女郎] 未流出版权图@丛桃桃@辛楠_兔兔李颖 ...",
-		    "urls": [
-		        "http://www.zhuamei.net/home.php?mod=space&uid=11279&do=album&id=519&page=1"
-		    ],
-		    "intro": "美女语录：命运从来都是峰回路转的，因为有了曲折和故事，我们的生命才会精彩。有时候，哭泣，不是屈服；后退，不是认输；放手，不是放弃。摔倒了又怎样，至少我们还年轻！别妄想着倒带，这是生活，不是电影。人只要生活在这个世界上，就有很多烦恼，痛苦或是快乐，取决于你的内心。",
-		    "total": 29,
-		    "localPath": "/private/tmp/album/519-[TuiGirl推女郎] 未流出版权图@丛桃桃@辛楠_兔兔李颖 ..."
-		},
-		{
-		    "name": "[TuiGirl推女郎]2014.03.11 第24期 于大小姐",
-		    "urls": [
-		        "http://www.zhuamei.net/home.php?mod=space&uid=4&do=album&id=501&page=1",
-		        "http://www.zhuamei.net/home.php?mod=space&uid=4&do=album&id=501&page=2"
-		    ],
-		    "intro": "美女语录：相信美好，相信良善，为人，无悔就是道，无怨就是德。人生，所有的事情，哪能事事如意，样样顺心，何况，痛苦也不是人生的全部，伤过，哭过，日子还是得过。",
-		    "total": 55,
-		    "localPath": "/private/tmp/album/501-[TuiGirl推女郎]2014.03.11 第24期 于大小姐"
-		}		
-	];
-
-	items.forEach(function(item){
-		createImgLinkFile(item);
-	});
-	
-}
-
 /**
  * 下载图片，图片存放的位置，在 linkeFilePath 所在目录的 images 目录下
  * @param  {String}   linkeFilePath 图片下载链接的地址（本地文件系统绝对路径）
